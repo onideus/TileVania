@@ -178,6 +178,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ginger (Player)
       objectReference: {fileID: 0}
+    - target: {fileID: 7838565078506179277, guid: 93a3be0469db94e6d8804af31e0dccbc, type: 3}
+      propertyPath: speed
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 93a3be0469db94e6d8804af31e0dccbc, type: 3}
 --- !u!1 &49200147
