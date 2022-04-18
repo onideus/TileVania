@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 _moveInput;
     private Rigidbody2D _rigidbody;
     private CapsuleCollider2D _collider;
+    private BoxCollider2D _feetCollider;
     private Animator _animator;
     private Animation _animation;
     private LayerMask _groundLayer;
@@ -26,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         _collider = GetComponent<CapsuleCollider2D>();
+        _feetCollider = GetComponent<BoxCollider2D>();
         _animation = GetComponent<Animation>();
         _groundLayer = LayerMask.GetMask("Ground");
         _climbingLayer = LayerMask.GetMask("Climbing");
@@ -51,7 +53,7 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if (value.isPressed)
+        if (value.isPressed && _feetCollider.IsTouchingLayers(_groundLayer))
         {
             _rigidbody.velocity = Vector2.up * jumpForce;
         }
