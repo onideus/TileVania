@@ -10,7 +10,10 @@ public class LevelExit : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        StartCoroutine(LoadNextLevel());
+        if (col.CompareTag("Player"))
+        {
+            StartCoroutine(LoadNextLevel());
+        }
     }
 
     private IEnumerator LoadNextLevel()
@@ -18,12 +21,12 @@ public class LevelExit : MonoBehaviour
         yield return new WaitForSeconds(levelLoadDelay);
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int nextSceneIndex = currentSceneIndex + 1;
-        
+
         if (nextSceneIndex == SceneManager.sceneCountInBuildSettings)
         {
             nextSceneIndex = 0;
         }
-        
+
         SceneManager.LoadScene(nextSceneIndex);
     }
 }

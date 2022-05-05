@@ -135,6 +135,7 @@ public class PlayerMovement : MonoBehaviour
             _isAlive = false;
             _animator.SetTrigger(Dying);
             _rigidbody.AddForce(deathKick, ForceMode2D.Impulse);
+            FindObjectOfType<GameSession>().ProcessPlayerDeath();
         }
     }
 }
