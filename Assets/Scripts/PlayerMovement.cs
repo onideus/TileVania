@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float runSpeed = 5f;
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private float climbSpeed = 5f;
+    [SerializeField] private Vector2 deathKick = new(25f, 25f);
 
     private Vector2 _moveInput;
     private Rigidbody2D _rigidbody;
@@ -18,9 +19,13 @@ public class PlayerMovement : MonoBehaviour
     private Animation _animation;
     private LayerMask _groundLayer;
     private LayerMask _climbingLayer;
+    private LayerMask _enemiesLayer;
+    private LayerMask _hazardsLayer;
     private float _originalGravityScale;
+    private bool _isAlive = true;
     private static readonly int IsRunning = Animator.StringToHash("isRunning");
     private static readonly int IsClimbing = Animator.StringToHash("isClimbing");
+    private static readonly int Dying = Animator.StringToHash("Dying");
 
     private void Start()
     {
@@ -31,23 +36,41 @@ public class PlayerMovement : MonoBehaviour
         _animation = GetComponent<Animation>();
         _groundLayer = LayerMask.GetMask("Ground");
         _climbingLayer = LayerMask.GetMask("Climbing");
+        _enemiesLayer = LayerMask.GetMask("Enemies");
+        _hazardsLayer = LayerMask.GetMask("Hazards");
         _originalGravityScale = _rigidbody.gravityScale;
     }
 
     private void Update()
     {
+        if (!_isAlive)
+        {
+            return;
+        }
+
         Run();
         ClimbLadder();
         FlipSprite();
+        Die();
     }
 
     private void OnMove(InputValue value)
     {
+        if (!_isAlive)
+        {
+            return;
+        }
+
         _moveInput = value.Get<Vector2>();
     }
 
     private void OnJump(InputValue value)
     {
+        if (!_isAlive)
+        {
+            return;
+        }
+
         if (!_collider.IsTouchingLayers(_groundLayer))
         {
             return;
@@ -71,7 +94,7 @@ public class PlayerMovement : MonoBehaviour
         Vector2 playerVelocity = new Vector2(_rigidbody.velocity.x, _moveInput.y * climbSpeed);
         _rigidbody.velocity = playerVelocity;
         _rigidbody.gravityScale = 0f;
-        
+
         _animator.SetBool(IsClimbing, playerVelocity.y != 0);
     }
 
@@ -90,6 +113,16 @@ public class PlayerMovement : MonoBehaviour
         if (playerHasHorizontalSpeed)
         {
             transform.localScale = new Vector2(Mathf.Sign(_rigidbody.velocity.x), 1f);
+        }
+    }
+
+    private void Die()
+    {
+        if (_collider.IsTouchingLayers(_enemiesLayer) || _collider.IsTouchingLayers(_hazardsLayer))
+        {
+            _isAlive = false;
+            _animator.SetTrigger(Dying);
+            _rigidbody.AddForce(deathKick, ForceMode2D.Impulse);
         }
     }
 }
